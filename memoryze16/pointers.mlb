@@ -1,0 +1,76 @@
+# Memoryze16 pointers macros for CoCAS 0.2.3.
+# mem[X] denotes one 16-bit word at byte address X.
+# Every macro preserves SP. PS is scratch state after expansion.
+# Every unlisted register and memory cell is preserved.
+# Word addresses, SP and stack byte displacements must be even.
+
+# incptr PTR
+# Increment the word addressed by PTR.
+# @param PTR Register r0 through r7, holding a valid word address
+# @return mem[PTR] = (original mem[PTR] + 1) modulo 65536
+# @changed r3, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR must differ from r3.
+*incptr/1
+    incptr $1, r3
+
+# decptr PTR
+# Decrement the word addressed by PTR.
+# @param PTR Register r0 through r7, holding a valid word address
+# @return mem[PTR] = (original mem[PTR] - 1) modulo 65536
+# @changed r3, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR must differ from r3.
+*decptr/1
+    decptr $1, r3
+
+# incptr PTR, TMP
+# Increment the word addressed by PTR using explicit scratch.
+# @param PTR Register r0 through r7, holding a valid word address
+# @param TMP Scratch register, distinct from every live source or address register
+# @return mem[PTR] = (original mem[PTR] + 1) modulo 65536
+# @changed TMP, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR and TMP must be distinct.
+*incptr/2
+    ldw $1, $2
+    inc $2
+    stw $1, $2
+
+# decptr PTR, TMP
+# Decrement the word addressed by PTR using explicit scratch.
+# @param PTR Register r0 through r7, holding a valid word address
+# @param TMP Scratch register, distinct from every live source or address register
+# @return mem[PTR] = (original mem[PTR] - 1) modulo 65536
+# @changed TMP, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR and TMP must be distinct.
+*decptr/2
+    ldw $1, $2
+    dec $2
+    stw $1, $2
+
+# swapptr
+# Exchange the words addressed by r0 and r2.
+# @return mem[r0] = original mem[r2] and mem[r2] = original mem[r0]
+# @changed r1, r3, PS, mem[r0], mem[r2]
+# Preserves SP and every unlisted register and memory cell.
+# Arguments none. r0 and r2 supply the pointers and may hold the same address.
+*swapptr/0
+    swapptr r0, r2, r1, r3
+
+# swapptr PTR_A, PTR_B, TMP_A, TMP_B
+# Exchange two addressed words using explicit scratch.
+# @param PTR_A Register r0 through r7, holding the first word address
+# @param PTR_B Register r0 through r7, holding the second word address
+# @param TMP_A First scratch register, distinct from TMP_B and both pointers
+# @param TMP_B Second scratch register, distinct from TMP_A and both pointers
+# @return mem[PTR_A] = original mem[PTR_B] and mem[PTR_B] = original mem[PTR_A]
+# @changed TMP_A, TMP_B, PS, mem[PTR_A], mem[PTR_B]
+# Preserves SP and every unlisted register and memory cell.
+# Scratch registers must differ from each other and both pointers. Pointers may be the same register or hold the same address.
+*swapptr/4
+    ldw $1, $3
+    ldw $2, $4
+    stw $1, $4
+    stw $2, $3

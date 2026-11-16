@@ -1,0 +1,145 @@
+# Memoryze8 stack macros for CoCAS 0.2.3.
+# mem[X] denotes one 8-bit byte at byte address X.
+# Every macro preserves SP. PS is scratch state after expansion.
+# Every unlisted register and memory cell is preserved.
+
+# incstack OFFSET
+# Increment one stack byte.
+# @param OFFSET Immediate byte displacement from the current SP
+# @return mem[SP + OFFSET] = (original mem[SP + OFFSET] + 1) modulo 256
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*incstack/1
+    ldsa r0, $1
+    ld r0, r1
+    inc r1
+    st r0, r1
+
+# decstack OFFSET
+# Decrement one stack byte.
+# @param OFFSET Immediate byte displacement from the current SP
+# @return mem[SP + OFFSET] = (original mem[SP + OFFSET] - 1) modulo 256
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*decstack/1
+    ldsa r0, $1
+    ld r0, r1
+    dec r1
+    st r0, r1
+
+# getstack REG, OFFSET
+# Load a stack byte into a register.
+# @param REG Register r0 through r3
+# @param OFFSET Immediate byte displacement from the current SP
+# @return REG = mem[SP + OFFSET]
+# @changed REG, PS
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*getstack/2
+    ldsa $1, $2
+    ld $1, $1
+
+# setstack DST, SRC
+# Copy one stack byte with the destination argument first.
+# @param DST Immediate byte displacement from the current SP
+# @param SRC Immediate byte displacement from the current SP
+# @return mem[SP + DST] = original mem[SP + SRC]
+# @changed r0, r1, r2, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# SRC and DST may be equal.
+*setstack/2
+    ldsa r0, $2
+    ld r0, r1
+    ldsa r2, $1
+    st r2, r1
+
+# setstacki OFFSET, VALUE
+# Store an immediate stack byte.
+# @param OFFSET Immediate byte displacement from the current SP
+# @param VALUE Immediate 8-bit value
+# @return mem[SP + OFFSET] = VALUE modulo 256
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*setstacki/2
+    ldsa r0, $1
+    ldi r1, $2
+    st r0, r1
+
+# sumstack SRC, DST
+# Add the source stack byte to the destination.
+# @param SRC Immediate byte displacement from the current SP
+# @param DST Immediate byte displacement from the current SP
+# @return mem[SP + DST] = (original mem[SP + DST] + original mem[SP + SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets double the original value.
+*sumstack/2
+    ldsa r0, $1
+    ld r0, r1
+    ldsa r2, $2
+    ld r2, r3
+    add r1, r3
+    st r2, r3
+
+# substack SRC, DST
+# Subtract the source stack byte from the destination.
+# @param SRC Immediate byte displacement from the current SP
+# @param DST Immediate byte displacement from the current SP
+# @return mem[SP + DST] = (original mem[SP + DST] - original mem[SP + SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets produce zero.
+*substack/2
+    ldsa r0, $1
+    ld r0, r1
+    ldsa r2, $2
+    ld r2, r3
+    sub r3, r1
+    st r2, r1
+
+# swapstack A, B
+# Exchange two stack bytes.
+# @param A Immediate byte displacement from the current SP
+# @param B Immediate byte displacement from the current SP
+# @return mem[SP + A] = original mem[SP + B] and mem[SP + B] = original mem[SP + A]
+# @changed r0, r1, r2, r3, PS, mem[SP + A], mem[SP + B]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# A and B may be equal.
+*swapstack/2
+    ldsa r0, $1
+    ldsa r2, $2
+    ld r0, r1
+    ld r2, r3
+    st r0, r3
+    st r2, r1
+
+# mulstack SRC, DST
+# Multiply two stack bytes.
+# @param SRC Immediate byte displacement from the current SP
+# @param DST Immediate byte displacement from the current SP
+# @return mem[SP + DST] = (original mem[SP + DST] * original mem[SP + SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets square the original value. Uses at most 255 additions.
+*mulstack/2
+    ldsa r0, $1
+    ld r0, r1
+    ldsa r2, $2
+    ld r2, r3
+    clr r0
+    while
+        tst r3
+    stays nz
+        add r1, r0
+        dec r3
+    wend
+    ldsa r2, $2
+    st r2, r0

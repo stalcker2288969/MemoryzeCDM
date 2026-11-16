@@ -1,0 +1,88 @@
+version: 1
+source_roots:
+- .
+suites:
+  memory:
+    program: tests/memory.asm
+    suite: tests/memory.yaml
+  memory-harvard:
+    program: tests/memory.asm
+    suite: tests/memory-harvard.yaml
+  immediates:
+    program: tests/immediates.asm
+    suite: tests/immediates.yaml
+  immediates-harvard:
+    program: tests/immediates.asm
+    suite: tests/immediates-harvard.yaml
+  arithmetic:
+    program: tests/arithmetic.asm
+    suite: tests/arithmetic.yaml
+  arithmetic-harvard:
+    program: tests/arithmetic.asm
+    suite: tests/arithmetic-harvard.yaml
+  aliases:
+    program: tests/aliases.asm
+    suite: tests/aliases.yaml
+  aliases-harvard:
+    program: tests/aliases.asm
+    suite: tests/aliases-harvard.yaml
+  stack:
+    program: tests/stack.asm
+    suite: tests/stack.yaml
+  stack-harvard:
+    program: tests/stack.asm
+    suite: tests/stack-harvard.yaml
+  stack-arithmetic:
+    program: tests/stack-arithmetic.asm
+    suite: tests/stack-arithmetic.yaml
+  stack-arithmetic-harvard:
+    program: tests/stack-arithmetic.asm
+    suite: tests/stack-arithmetic-harvard.yaml
+  stack-aliases:
+    program: tests/stack-aliases.asm
+    suite: tests/stack-aliases.yaml
+  stack-aliases-harvard:
+    program: tests/stack-aliases.asm
+    suite: tests/stack-aliases-harvard.yaml
+  pointers:
+    program: tests/pointers.asm
+    suite: tests/pointers.yaml
+  pointers-harvard:
+    program: tests/pointers.asm
+    suite: tests/pointers-harvard.yaml
+  pointers-explicit:
+    program: tests/pointers-explicit.asm
+    suite: tests/pointers-explicit.yaml
+  pointers-explicit-harvard:
+    program: tests/pointers-explicit.asm
+    suite: tests/pointers-explicit-harvard.yaml
+  memory-registers:
+    program: tests/memory-registers.asm
+    suite: tests/memory-registers.yaml
+  memory-registers-harvard:
+    program: tests/memory-registers.asm
+    suite: tests/memory-registers-harvard.yaml
+  stack-registers:
+    program: tests/stack-registers.asm
+    suite: tests/stack-registers.yaml
+  stack-registers-harvard:
+    program: tests/stack-registers.asm
+    suite: tests/stack-registers-harvard.yaml
+  example:
+    program: example.cdm16.asm
+    suite: tests/example.yaml
+  example-harvard:
+    program: example.cdm16.asm
+    suite: tests/example-harvard.yaml
+syntax:
+  cdm16:
+    architecture: cdm16
+    files:
+    - lib.asm
+    - memory.mlb
+    - stack.mlb
+    - pointers.mlb
+    - example.cdm16.asm
+    directories:
+    - tests
+    recursive: false

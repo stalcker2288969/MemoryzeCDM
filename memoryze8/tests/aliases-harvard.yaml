@@ -1,0 +1,120 @@
+version: 1
+architecture: cdm8
+memory_model: harvard
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      sp: 224
+    memory:
+      0x9f: 83
+      0xa6: 167
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  allowed_register_changes:
+  - r0
+  - r1
+  - r2
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 160
+  - address: 0xa6
+    length: 90
+cases:
+  value_0:
+    setup:
+      memory:
+        0xa0: 0
+        0xa1: 0
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+    expect:
+      memory:
+        0xa0: 0
+        0xa1: 0
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+  value_1:
+    setup:
+      memory:
+        0xa0: 1
+        0xa1: 1
+        0xa2: 1
+        0xa3: 1
+        0xa4: 1
+        0xa5: 1
+    expect:
+      memory:
+        0xa0: 1
+        0xa1: 1
+        0xa2: 2
+        0xa3: 0
+        0xa4: 1
+        0xa5: 1
+  value_2:
+    setup:
+      memory:
+        0xa0: 2
+        0xa1: 2
+        0xa2: 2
+        0xa3: 2
+        0xa4: 2
+        0xa5: 2
+    expect:
+      memory:
+        0xa0: 2
+        0xa1: 2
+        0xa2: 4
+        0xa3: 0
+        0xa4: 4
+        0xa5: 4
+  value_128:
+    setup:
+      memory:
+        0xa0: 128
+        0xa1: 128
+        0xa2: 128
+        0xa3: 128
+        0xa4: 128
+        0xa5: 128
+    expect:
+      memory:
+        0xa0: 128
+        0xa1: 128
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+  value_255:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 255
+        0xa2: 255
+        0xa3: 255
+        0xa4: 255
+        0xa5: 255
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 255
+        0xa2: 254
+        0xa3: 0
+        0xa4: 1
+        0xa5: 1

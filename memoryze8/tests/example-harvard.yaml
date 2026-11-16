@@ -1,0 +1,15 @@
+version: 1
+architecture: cdm8
+memory_model: harvard
+cases:
+  six_times_seven:
+    run:
+      until: halt
+      max_steps: 5000
+    expect:
+      registers:
+        r3: 42
+        sp: 240
+      memory:
+        0xc0: 42
+        0xc1: 42

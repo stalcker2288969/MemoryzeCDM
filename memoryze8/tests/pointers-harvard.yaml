@@ -1,0 +1,83 @@
+version: 1
+architecture: cdm8
+memory_model: harvard
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      sp: 224
+    memory:
+      0x9f: 83
+      0xa2: 167
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  - r0
+  - r2
+  allowed_register_changes:
+  - r1
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 160
+  - address: 0xa2
+    length: 94
+cases:
+  ordinary:
+    setup:
+      memory:
+        0xa0: 5
+        0xa1: 10
+      registers:
+        r0: 160
+        r2: 161
+    expect:
+      memory:
+        0xa0: 9
+        0xa1: 6
+  wrap:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 0
+      registers:
+        r0: 160
+        r2: 161
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 0
+  zeros:
+    setup:
+      memory:
+        0xa0: 0
+        0xa1: 0
+      registers:
+        r0: 160
+        r2: 161
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 1
+  same_address:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 17
+      registers:
+        r0: 160
+        r2: 160
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 17

@@ -1,0 +1,82 @@
+# Memoryze8 pointers macros for CoCAS 0.2.3.
+# mem[X] denotes one 8-bit byte at byte address X.
+# Every macro preserves SP. PS is scratch state after expansion.
+# Every unlisted register and memory cell is preserved.
+
+# incptr PTR
+# Increment the byte addressed by PTR.
+# @param PTR Register r0 through r3, holding a valid byte address
+# @return mem[PTR] = (original mem[PTR] + 1) modulo 256
+# @changed r3, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR must differ from r3.
+*incptr/1
+    ld $1, r3
+    inc r3
+    st $1, r3
+
+# decptr PTR
+# Decrement the byte addressed by PTR.
+# @param PTR Register r0 through r3, holding a valid byte address
+# @return mem[PTR] = (original mem[PTR] - 1) modulo 256
+# @changed r3, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR must differ from r3.
+*decptr/1
+    ld $1, r3
+    dec r3
+    st $1, r3
+
+# swapptr
+# Exchange the bytes addressed by r0 and r2.
+# @return mem[r0] = original mem[r2] and mem[r2] = original mem[r0]
+# @changed r1, r3, PS, mem[r0], mem[r2]
+# Preserves SP and every unlisted register and memory cell.
+# Arguments none. r0 and r2 supply the pointers and may hold the same address.
+*swapptr/0
+    ld r0, r1
+    ld r2, r3
+    st r0, r3
+    st r2, r1
+
+# incptr PTR, TMP
+# Increment the byte addressed by PTR using explicit scratch.
+# @param PTR Register r0 through r3, holding a valid byte address
+# @param TMP Scratch register, distinct from every live source or address register
+# @return mem[PTR] = (original mem[PTR] + 1) modulo 256
+# @changed TMP, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR and TMP must be distinct.
+*incptr/2
+    ld $1, $2
+    inc $2
+    st $1, $2
+
+# decptr PTR, TMP
+# Decrement the byte addressed by PTR using explicit scratch.
+# @param PTR Register r0 through r3, holding a valid byte address
+# @param TMP Scratch register, distinct from every live source or address register
+# @return mem[PTR] = (original mem[PTR] - 1) modulo 256
+# @changed TMP, PS, mem[PTR]
+# Preserves SP and every unlisted register and memory cell.
+# PTR and TMP must be distinct.
+*decptr/2
+    ld $1, $2
+    dec $2
+    st $1, $2
+
+# swapptr PTR_A, PTR_B, TMP_A, TMP_B
+# Exchange two addressed bytes using explicit scratch.
+# @param PTR_A Register r0 through r3, holding the first byte address
+# @param PTR_B Register r0 through r3, holding the second byte address
+# @param TMP_A First scratch register, distinct from TMP_B and both pointers
+# @param TMP_B Second scratch register, distinct from TMP_A and both pointers
+# @return mem[PTR_A] = original mem[PTR_B] and mem[PTR_B] = original mem[PTR_A]
+# @changed TMP_A, TMP_B, PS, mem[PTR_A], mem[PTR_B]
+# Preserves SP and every unlisted register and memory cell.
+# Scratch registers must differ from each other and both pointers. Pointers may be the same register or hold the same address.
+*swapptr/4
+    ld $1, $3
+    ld $2, $4
+    st $1, $4
+    st $2, $3

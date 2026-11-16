@@ -1,0 +1,15 @@
+version: 1
+architecture: cdm16
+memory_model: harvard
+cases:
+  six_times_seven:
+    run:
+      until: halt
+      max_steps: 5000
+    expect:
+      registers:
+        r3: 42
+        sp: 32768
+      memory:
+        0xc000: [0x2a, 0x0]
+        0xc002: [0x2a, 0x0]

@@ -1,0 +1,91 @@
+version: 1
+architecture: cdm16
+memory_model: harvard
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      r4: 85
+      r5: 102
+      r6: 119
+      r7: 136
+      sp: 61440
+    memory:
+      0x8ffe: [0x53, 0x0]
+      0x9004: [0xa7, 0x0]
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  - r0
+  - r2
+  - r4
+  - r5
+  - r6
+  - r7
+  allowed_register_changes:
+  - r1
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 36864
+  - address: 0x9004
+    length: 28668
+cases:
+  ordinary:
+    setup:
+      memory:
+        0x9000: [0x5, 0x0]
+        0x9002: [0xa, 0x0]
+      registers:
+        r0: 36864
+        r2: 36866
+    expect:
+      memory:
+        0x9000: [0x9, 0x0]
+        0x9002: [0x6, 0x0]
+  wrap:
+    setup:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0x0, 0x0]
+      registers:
+        r0: 36864
+        r2: 36866
+    expect:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0x0, 0x0]
+  zeros:
+    setup:
+      memory:
+        0x9000: [0x0, 0x0]
+        0x9002: [0x0, 0x0]
+      registers:
+        r0: 36864
+        r2: 36866
+    expect:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0x1, 0x0]
+  same_address:
+    setup:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0x11, 0x0]
+      registers:
+        r0: 36864
+        r2: 36864
+    expect:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0x11, 0x0]

@@ -1,0 +1,266 @@
+version: 1
+architecture: cdm8
+memory_model: unified
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      sp: 224
+    memory:
+      0x9f: 83
+      0xa8: 167
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  allowed_register_changes:
+  - r0
+  - r1
+  - r2
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 160
+  - address: 0xa8
+    length: 88
+cases:
+  zero:
+    setup:
+      memory:
+        0xa0: 0
+        0xa1: 0
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+        0xa6: 0
+        0xa7: 0
+    expect:
+      memory:
+        0xa0: 0
+        0xa1: 0
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+        0xa6: 0
+        0xa7: 0
+  zero_times_max:
+    setup:
+      memory:
+        0xa0: 0
+        0xa1: 255
+        0xa2: 0
+        0xa3: 255
+        0xa4: 0
+        0xa5: 255
+        0xa6: 255
+        0xa7: 0
+    expect:
+      memory:
+        0xa0: 0
+        0xa1: 255
+        0xa2: 0
+        0xa3: 255
+        0xa4: 0
+        0xa5: 0
+        0xa6: 255
+        0xa7: 0
+  max_times_zero:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 0
+        0xa2: 255
+        0xa3: 0
+        0xa4: 255
+        0xa5: 0
+        0xa6: 0
+        0xa7: 255
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 255
+        0xa2: 255
+        0xa3: 1
+        0xa4: 255
+        0xa5: 0
+        0xa6: 0
+        0xa7: 0
+  one:
+    setup:
+      memory:
+        0xa0: 1
+        0xa1: 1
+        0xa2: 1
+        0xa3: 1
+        0xa4: 1
+        0xa5: 1
+        0xa6: 1
+        0xa7: 1
+    expect:
+      memory:
+        0xa0: 1
+        0xa1: 2
+        0xa2: 1
+        0xa3: 0
+        0xa4: 1
+        0xa5: 1
+        0xa6: 1
+        0xa7: 1
+  one_times_max:
+    setup:
+      memory:
+        0xa0: 1
+        0xa1: 255
+        0xa2: 1
+        0xa3: 255
+        0xa4: 1
+        0xa5: 255
+        0xa6: 255
+        0xa7: 1
+    expect:
+      memory:
+        0xa0: 1
+        0xa1: 0
+        0xa2: 1
+        0xa3: 254
+        0xa4: 1
+        0xa5: 255
+        0xa6: 255
+        0xa7: 255
+  max_times_one:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 1
+        0xa2: 255
+        0xa3: 1
+        0xa4: 255
+        0xa5: 1
+        0xa6: 1
+        0xa7: 255
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 0
+        0xa2: 255
+        0xa3: 2
+        0xa4: 255
+        0xa5: 255
+        0xa6: 1
+        0xa7: 255
+  overflow:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 255
+        0xa2: 255
+        0xa3: 255
+        0xa4: 255
+        0xa5: 255
+        0xa6: 255
+        0xa7: 255
+    expect:
+      memory:
+        0xa0: 255
+        0xa1: 254
+        0xa2: 255
+        0xa3: 0
+        0xa4: 255
+        0xa5: 1
+        0xa6: 255
+        0xa7: 1
+  sign_boundary:
+    setup:
+      memory:
+        0xa0: 128
+        0xa1: 2
+        0xa2: 128
+        0xa3: 2
+        0xa4: 128
+        0xa5: 2
+        0xa6: 2
+        0xa7: 128
+    expect:
+      memory:
+        0xa0: 128
+        0xa1: 130
+        0xa2: 128
+        0xa3: 130
+        0xa4: 128
+        0xa5: 0
+        0xa6: 2
+        0xa7: 0
+  unequal:
+    setup:
+      memory:
+        0xa0: 7
+        0xa1: 3
+        0xa2: 7
+        0xa3: 3
+        0xa4: 7
+        0xa5: 3
+        0xa6: 3
+        0xa7: 7
+    expect:
+      memory:
+        0xa0: 7
+        0xa1: 10
+        0xa2: 7
+        0xa3: 252
+        0xa4: 7
+        0xa5: 21
+        0xa6: 3
+        0xa7: 21
+  reverse_unequal:
+    setup:
+      memory:
+        0xa0: 3
+        0xa1: 7
+        0xa2: 3
+        0xa3: 7
+        0xa4: 3
+        0xa5: 7
+        0xa6: 7
+        0xa7: 3
+    expect:
+      memory:
+        0xa0: 3
+        0xa1: 10
+        0xa2: 3
+        0xa3: 4
+        0xa4: 3
+        0xa5: 21
+        0xa6: 7
+        0xa7: 21
+  mixed_bits:
+    setup:
+      memory:
+        0xa0: 165
+        0xa1: 83
+        0xa2: 165
+        0xa3: 83
+        0xa4: 165
+        0xa5: 83
+        0xa6: 83
+        0xa7: 165
+    expect:
+      memory:
+        0xa0: 165
+        0xa1: 248
+        0xa2: 165
+        0xa3: 174
+        0xa4: 165
+        0xa5: 127
+        0xa6: 83
+        0xa7: 127

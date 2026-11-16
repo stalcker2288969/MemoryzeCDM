@@ -1,0 +1,98 @@
+version: 1
+architecture: cdm8
+memory_model: unified
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      sp: 224
+    memory:
+      0x9f: 83
+      0xa8: 167
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  allowed_register_changes:
+  - r0
+  - r1
+  - r2
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 160
+  - address: 0xa8
+    length: 88
+cases:
+  ordinary:
+    setup:
+      memory:
+        0xa0: 4
+        0xa1: 9
+        0xa2: 7
+        0xa3: 31
+        0xa4: 8
+        0xa5: 2
+        0xa6: 19
+        0xa7: 6
+    expect:
+      memory:
+        0xa0: 5
+        0xa1: 8
+        0xa2: 42
+        0xa3: 31
+        0xa4: 31
+        0xa5: 19
+        0xa6: 2
+        0xa7: 31
+  wrap:
+    setup:
+      memory:
+        0xa0: 255
+        0xa1: 0
+        0xa2: 17
+        0xa3: 255
+        0xa4: 3
+        0xa5: 1
+        0xa6: 255
+        0xa7: 33
+    expect:
+      memory:
+        0xa0: 0
+        0xa1: 255
+        0xa2: 42
+        0xa3: 255
+        0xa4: 255
+        0xa5: 255
+        0xa6: 1
+        0xa7: 255
+  zero_and_max:
+    setup:
+      memory:
+        0xa0: 0
+        0xa1: 255
+        0xa2: 0
+        0xa3: 0
+        0xa4: 0
+        0xa5: 0
+        0xa6: 255
+        0xa7: 0
+    expect:
+      memory:
+        0xa0: 1
+        0xa1: 254
+        0xa2: 42
+        0xa3: 0
+        0xa4: 0
+        0xa5: 255
+        0xa6: 0
+        0xa7: 0

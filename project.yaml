@@ -1,0 +1,180 @@
+version: 1
+source_roots:
+- memoryze8
+- memoryze16
+suites:
+  memoryze8-memory:
+    program: memoryze8/tests/memory.asm
+    suite: memoryze8/tests/memory.yaml
+  memoryze8-memory-harvard:
+    program: memoryze8/tests/memory.asm
+    suite: memoryze8/tests/memory-harvard.yaml
+  memoryze8-immediates:
+    program: memoryze8/tests/immediates.asm
+    suite: memoryze8/tests/immediates.yaml
+  memoryze8-immediates-harvard:
+    program: memoryze8/tests/immediates.asm
+    suite: memoryze8/tests/immediates-harvard.yaml
+  memoryze8-arithmetic:
+    program: memoryze8/tests/arithmetic.asm
+    suite: memoryze8/tests/arithmetic.yaml
+  memoryze8-arithmetic-harvard:
+    program: memoryze8/tests/arithmetic.asm
+    suite: memoryze8/tests/arithmetic-harvard.yaml
+  memoryze8-aliases:
+    program: memoryze8/tests/aliases.asm
+    suite: memoryze8/tests/aliases.yaml
+  memoryze8-aliases-harvard:
+    program: memoryze8/tests/aliases.asm
+    suite: memoryze8/tests/aliases-harvard.yaml
+  memoryze8-stack:
+    program: memoryze8/tests/stack.asm
+    suite: memoryze8/tests/stack.yaml
+  memoryze8-stack-harvard:
+    program: memoryze8/tests/stack.asm
+    suite: memoryze8/tests/stack-harvard.yaml
+  memoryze8-stack-arithmetic:
+    program: memoryze8/tests/stack-arithmetic.asm
+    suite: memoryze8/tests/stack-arithmetic.yaml
+  memoryze8-stack-arithmetic-harvard:
+    program: memoryze8/tests/stack-arithmetic.asm
+    suite: memoryze8/tests/stack-arithmetic-harvard.yaml
+  memoryze8-stack-aliases:
+    program: memoryze8/tests/stack-aliases.asm
+    suite: memoryze8/tests/stack-aliases.yaml
+  memoryze8-stack-aliases-harvard:
+    program: memoryze8/tests/stack-aliases.asm
+    suite: memoryze8/tests/stack-aliases-harvard.yaml
+  memoryze8-pointers:
+    program: memoryze8/tests/pointers.asm
+    suite: memoryze8/tests/pointers.yaml
+  memoryze8-pointers-harvard:
+    program: memoryze8/tests/pointers.asm
+    suite: memoryze8/tests/pointers-harvard.yaml
+  memoryze8-pointers-explicit:
+    program: memoryze8/tests/pointers-explicit.asm
+    suite: memoryze8/tests/pointers-explicit.yaml
+  memoryze8-pointers-explicit-harvard:
+    program: memoryze8/tests/pointers-explicit.asm
+    suite: memoryze8/tests/pointers-explicit-harvard.yaml
+  memoryze8-memory-registers:
+    program: memoryze8/tests/memory-registers.asm
+    suite: memoryze8/tests/memory-registers.yaml
+  memoryze8-memory-registers-harvard:
+    program: memoryze8/tests/memory-registers.asm
+    suite: memoryze8/tests/memory-registers-harvard.yaml
+  memoryze8-stack-registers:
+    program: memoryze8/tests/stack-registers.asm
+    suite: memoryze8/tests/stack-registers.yaml
+  memoryze8-stack-registers-harvard:
+    program: memoryze8/tests/stack-registers.asm
+    suite: memoryze8/tests/stack-registers-harvard.yaml
+  memoryze8-example:
+    program: memoryze8/example.cdm8.asm
+    suite: memoryze8/tests/example.yaml
+  memoryze8-example-harvard:
+    program: memoryze8/example.cdm8.asm
+    suite: memoryze8/tests/example-harvard.yaml
+  memoryze16-memory:
+    program: memoryze16/tests/memory.asm
+    suite: memoryze16/tests/memory.yaml
+  memoryze16-memory-harvard:
+    program: memoryze16/tests/memory.asm
+    suite: memoryze16/tests/memory-harvard.yaml
+  memoryze16-immediates:
+    program: memoryze16/tests/immediates.asm
+    suite: memoryze16/tests/immediates.yaml
+  memoryze16-immediates-harvard:
+    program: memoryze16/tests/immediates.asm
+    suite: memoryze16/tests/immediates-harvard.yaml
+  memoryze16-arithmetic:
+    program: memoryze16/tests/arithmetic.asm
+    suite: memoryze16/tests/arithmetic.yaml
+  memoryze16-arithmetic-harvard:
+    program: memoryze16/tests/arithmetic.asm
+    suite: memoryze16/tests/arithmetic-harvard.yaml
+  memoryze16-aliases:
+    program: memoryze16/tests/aliases.asm
+    suite: memoryze16/tests/aliases.yaml
+  memoryze16-aliases-harvard:
+    program: memoryze16/tests/aliases.asm
+    suite: memoryze16/tests/aliases-harvard.yaml
+  memoryze16-stack:
+    program: memoryze16/tests/stack.asm
+    suite: memoryze16/tests/stack.yaml
+  memoryze16-stack-harvard:
+    program: memoryze16/tests/stack.asm
+    suite: memoryze16/tests/stack-harvard.yaml
+  memoryze16-stack-arithmetic:
+    program: memoryze16/tests/stack-arithmetic.asm
+    suite: memoryze16/tests/stack-arithmetic.yaml
+  memoryze16-stack-arithmetic-harvard:
+    program: memoryze16/tests/stack-arithmetic.asm
+    suite: memoryze16/tests/stack-arithmetic-harvard.yaml
+  memoryze16-stack-aliases:
+    program: memoryze16/tests/stack-aliases.asm
+    suite: memoryze16/tests/stack-aliases.yaml
+  memoryze16-stack-aliases-harvard:
+    program: memoryze16/tests/stack-aliases.asm
+    suite: memoryze16/tests/stack-aliases-harvard.yaml
+  memoryze16-pointers:
+    program: memoryze16/tests/pointers.asm
+    suite: memoryze16/tests/pointers.yaml
+  memoryze16-pointers-harvard:
+    program: memoryze16/tests/pointers.asm
+    suite: memoryze16/tests/pointers-harvard.yaml
+  memoryze16-pointers-explicit:
+    program: memoryze16/tests/pointers-explicit.asm
+    suite: memoryze16/tests/pointers-explicit.yaml
+  memoryze16-pointers-explicit-harvard:
+    program: memoryze16/tests/pointers-explicit.asm
+    suite: memoryze16/tests/pointers-explicit-harvard.yaml
+  memoryze16-memory-registers:
+    program: memoryze16/tests/memory-registers.asm
+    suite: memoryze16/tests/memory-registers.yaml
+  memoryze16-memory-registers-harvard:
+    program: memoryze16/tests/memory-registers.asm
+    suite: memoryze16/tests/memory-registers-harvard.yaml
+  memoryze16-stack-registers:
+    program: memoryze16/tests/stack-registers.asm
+    suite: memoryze16/tests/stack-registers.yaml
+  memoryze16-stack-registers-harvard:
+    program: memoryze16/tests/stack-registers.asm
+    suite: memoryze16/tests/stack-registers-harvard.yaml
+  memoryze16-example:
+    program: memoryze16/example.cdm16.asm
+    suite: memoryze16/tests/example.yaml
+  memoryze16-example-harvard:
+    program: memoryze16/example.cdm16.asm
+    suite: memoryze16/tests/example-harvard.yaml
+syntax:
+  cdm8:
+    architecture: cdm8
+    files:
+    - memoryze8/lib.asm
+    - memoryze8/memory.mlb
+    - memoryze8/stack.mlb
+    - memoryze8/pointers.mlb
+    - memoryze8/example.cdm8.asm
+    directories:
+    - memoryze8/tests
+    recursive: false
+  cdm16:
+    architecture: cdm16
+    files:
+    - memoryze16/lib.asm
+    - memoryze16/memory.mlb
+    - memoryze16/stack.mlb
+    - memoryze16/pointers.mlb
+    - memoryze16/example.cdm16.asm
+    directories:
+    - memoryze16/tests
+    recursive: false
+structure:
+  files:
+  - memoryze8/cdm-package.json
+  - memoryze8/lib.asm
+  - memoryze8/README.md
+  - memoryze16/cdm-package.json
+  - memoryze16/lib.asm
+  - memoryze16/README.md

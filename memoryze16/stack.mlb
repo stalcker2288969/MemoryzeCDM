@@ -1,0 +1,163 @@
+# Memoryze16 stack macros for CoCAS 0.2.3.
+# mem[X] denotes one 16-bit word at byte address X.
+# Every macro preserves SP. PS is scratch state after expansion.
+# Every unlisted register and memory cell is preserved.
+# Word addresses, SP and stack byte displacements must be even.
+
+# mz_stackaddr ADDR, OFFSET, TMP
+# Compute a stack address for the internal word helpers.
+# @param ADDR Address output register, distinct from TMP
+# @param OFFSET Immediate byte displacement from the current SP, even for word access
+# @param TMP Scratch register, distinct from every live source or address register
+# @return ADDR = (SP + OFFSET) modulo 65536
+# @changed ADDR, TMP, PS
+# Preserves SP and every unlisted register and memory cell.
+# ADDR and TMP must be distinct.
+*mz_stackaddr/3
+    ldsp $1
+    ldi $3, $2
+    add $3, $1
+
+# incstack OFFSET
+# Increment one stack word.
+# @param OFFSET Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + OFFSET] = (original mem[SP + OFFSET] + 1) modulo 65536
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*incstack/1
+    mz_stackaddr r0, $1, r1
+    ldw r0, r1
+    inc r1
+    stw r0, r1
+
+# decstack OFFSET
+# Decrement one stack word.
+# @param OFFSET Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + OFFSET] = (original mem[SP + OFFSET] - 1) modulo 65536
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*decstack/1
+    mz_stackaddr r0, $1, r1
+    ldw r0, r1
+    dec r1
+    stw r0, r1
+
+# getstack REG, OFFSET
+# Load a stack word into a register.
+# @param REG Register r0 through r7
+# @param OFFSET Immediate byte displacement from the current SP, even for word access
+# @return REG = mem[SP + OFFSET]
+# @changed r0, r1, REG, PS
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*getstack/2
+    mz_stackaddr r0, $2, r1
+    ldw r0, $1
+
+# setstack DST, SRC
+# Copy one stack word with the destination argument first.
+# @param DST Immediate byte displacement from the current SP, even for word access
+# @param SRC Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + DST] = original mem[SP + SRC]
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# SRC and DST may be equal.
+*setstack/2
+    mz_stackaddr r0, $2, r1
+    ldw r0, r1
+    mz_stackaddr r2, $1, r3
+    stw r2, r1
+
+# setstacki OFFSET, VALUE
+# Store an immediate stack word.
+# @param OFFSET Immediate byte displacement from the current SP, even for word access
+# @param VALUE Immediate 16-bit value
+# @return mem[SP + OFFSET] = VALUE modulo 65536
+# @changed r0, r1, PS, mem[SP + OFFSET]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+*setstacki/2
+    mz_stackaddr r0, $1, r1
+    ldi r1, $2
+    stw r0, r1
+
+# sumstack SRC, DST
+# Add the source stack word to the destination.
+# @param SRC Immediate byte displacement from the current SP, even for word access
+# @param DST Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + DST] = (original mem[SP + DST] + original mem[SP + SRC]) modulo 65536
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets double the original value.
+*sumstack/2
+    mz_stackaddr r0, $1, r1
+    ldw r0, r1
+    mz_stackaddr r2, $2, r3
+    ldw r2, r3
+    add r1, r3
+    stw r2, r3
+
+# substack SRC, DST
+# Subtract the source stack word from the destination.
+# @param SRC Immediate byte displacement from the current SP, even for word access
+# @param DST Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + DST] = (original mem[SP + DST] - original mem[SP + SRC]) modulo 65536
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets produce zero.
+*substack/2
+    mz_stackaddr r0, $1, r1
+    ldw r0, r1
+    mz_stackaddr r2, $2, r3
+    ldw r2, r3
+    sub r3, r1
+    stw r2, r1
+
+# swapstack A, B
+# Exchange two stack words.
+# @param A Immediate byte displacement from the current SP, even for word access
+# @param B Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + A] = original mem[SP + B] and mem[SP + B] = original mem[SP + A]
+# @changed r0, r1, r2, r3, PS, mem[SP + A], mem[SP + B]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# A and B may be equal.
+*swapstack/2
+    mz_stackaddr r0, $1, r1
+    mz_stackaddr r2, $2, r3
+    ldw r0, r1
+    ldw r2, r3
+    stw r0, r3
+    stw r2, r1
+
+# mulstack SRC, DST
+# Multiply two stack words.
+# @param SRC Immediate byte displacement from the current SP, even for word access
+# @param DST Immediate byte displacement from the current SP, even for word access
+# @return mem[SP + DST] = (original mem[SP + DST] * original mem[SP + SRC]) modulo 65536
+# @changed r0, r1, r2, r3, PS, mem[SP + DST]
+# Preserves SP and every unlisted register and memory cell.
+# Referenced stack storage must be valid for this access.
+# Equal offsets square the original value. Uses at most 16 shift-and-add iterations.
+*mulstack/2
+    mz_stackaddr r0, $1, r1
+    ldw r0, r1
+    mz_stackaddr r2, $2, r3
+    ldw r2, r3
+    clr r0
+    while
+        tst r3
+    stays nz
+        if
+            shr r3
+        is cs
+            add r1, r0
+        fi
+        shl r1
+    wend
+    stw r2, r0

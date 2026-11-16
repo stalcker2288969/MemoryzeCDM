@@ -1,0 +1,55 @@
+version: 1
+architecture: cdm16
+memory_model: harvard
+build:
+  sources:
+  - ../memory.mlb
+  - ../stack.mlb
+  - ../pointers.mlb
+defaults:
+  setup:
+    registers:
+      r0: 17
+      r1: 34
+      r2: 51
+      r3: 68
+      r4: 85
+      r5: 102
+      r6: 119
+      r7: 136
+      sp: 61440
+    memory:
+      0x8ffe: [0x53, 0x0]
+      0x9008: [0xa7, 0x0]
+  run:
+    until: halt
+    max_steps: 5000
+  preserve_registers:
+  - sp
+  - r4
+  - r5
+  - r6
+  - r7
+  allowed_register_changes:
+  - r0
+  - r1
+  - r2
+  - r3
+  preserve_memory:
+  - address: 0x0
+    length: 36864
+  - address: 0x9008
+    length: 24568
+  - address: 0xf006
+    length: 4090
+cases:
+  full_width_literals:
+    expect:
+      memory:
+        0x9000: [0xff, 0xff]
+        0x9002: [0xff, 0xff]
+        0x9004: [0x0, 0x80]
+        0x9006: [0x0, 0x0]
+        0xf000: [0xff, 0xff]
+        0xf002: [0xff, 0xff]
+        0xf004: [0x0, 0x80]

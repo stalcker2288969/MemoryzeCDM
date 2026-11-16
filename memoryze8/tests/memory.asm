@@ -1,0 +1,11 @@
+asect 0
+start:
+    incmem 0xa0
+    decmem 0xa1
+    setmem 0xa2, 42
+    copymem 0xa3, 0xa4
+    swapmem 0xa5, 0xa6
+    getmem r3, 0xa4
+    putmem 0xa7, r3, r2
+    halt
+end

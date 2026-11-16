@@ -1,0 +1,149 @@
+# Memoryze8 memory macros for CoCAS 0.2.3.
+# mem[X] denotes one 8-bit byte at byte address X.
+# Every macro preserves SP. PS is scratch state after expansion.
+# Every unlisted register and memory cell is preserved.
+
+# incmem ADDRESS
+# Increment one memory byte.
+# @param ADDRESS Immediate byte address or label
+# @return mem[ADDRESS] = (mem[ADDRESS] + 1) modulo 256
+# @changed r0, r1, PS, mem[ADDRESS]
+# Preserves SP and every unlisted register and memory cell.
+*incmem/1
+    ldi r0, $1
+    ld r0, r1
+    inc r1
+    st r0, r1
+
+# decmem ADDRESS
+# Decrement one memory byte.
+# @param ADDRESS Immediate byte address or label
+# @return mem[ADDRESS] = (mem[ADDRESS] - 1) modulo 256
+# @changed r0, r1, PS, mem[ADDRESS]
+# Preserves SP and every unlisted register and memory cell.
+*decmem/1
+    ldi r0, $1
+    ld r0, r1
+    dec r1
+    st r0, r1
+
+# setmem ADDRESS, VALUE
+# Store an immediate byte in memory.
+# @param ADDRESS Immediate byte address or label
+# @param VALUE Immediate 8-bit value
+# @return mem[ADDRESS] = VALUE modulo 256
+# @changed r0, r1, PS, mem[ADDRESS]
+# Preserves SP and every unlisted register and memory cell.
+*setmem/2
+    ldi r0, $1
+    ldi r1, $2
+    st r0, r1
+
+# copymem SRC, DST
+# Copy one memory byte.
+# @param SRC Immediate byte address or label
+# @param DST Immediate byte address or label
+# @return mem[DST] = original mem[SRC]
+# @changed r0, r1, r2, PS, mem[DST]
+# Preserves SP and every unlisted register and memory cell.
+# SRC and DST may be the same address.
+*copymem/2
+    ldi r0, $1
+    ld r0, r1
+    ldi r2, $2
+    st r2, r1
+
+# swapmem A, B
+# Exchange two memory bytes.
+# @param A Immediate byte address or label
+# @param B Immediate byte address or label
+# @return mem[A] = original mem[B] and mem[B] = original mem[A]
+# @changed r0, r1, r2, r3, PS, mem[A], mem[B]
+# Preserves SP and every unlisted register and memory cell.
+# A and B may be the same address.
+*swapmem/2
+    ldi r0, $1
+    ldi r2, $2
+    ld r0, r1
+    ld r2, r3
+    st r0, r3
+    st r2, r1
+
+# getmem REG, ADDRESS
+# Load one memory byte into a register.
+# @param REG Register r0 through r3
+# @param ADDRESS Immediate byte address or label
+# @return REG = mem[ADDRESS]
+# @changed REG, PS
+# Preserves SP and every unlisted register and memory cell.
+*getmem/2
+    ldi $1, $2
+    ld $1, $1
+
+# putmem ADDRESS, REG, TMP
+# Store a register byte in memory.
+# @param ADDRESS Immediate byte address or label
+# @param REG Register r0 through r3
+# @param TMP Scratch register, distinct from every live source or address register
+# @return mem[ADDRESS] = REG
+# @changed TMP, PS, mem[ADDRESS]
+# Preserves SP and every unlisted register and memory cell.
+# TMP must differ from REG.
+*putmem/3
+    ldi $3, $1
+    st $3, $2
+
+# summem SRC, DST
+# Add one memory byte to another.
+# @param SRC Immediate byte address or label
+# @param DST Immediate byte address or label
+# @return mem[DST] = (original mem[DST] + original mem[SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[DST]
+# Preserves SP and every unlisted register and memory cell.
+# Equal source and destination addresses double the original value.
+*summem/2
+    ldi r0, $1
+    ld r0, r1
+    ldi r2, $2
+    ld r2, r3
+    add r1, r3
+    st r2, r3
+
+# submem SRC, DST
+# Subtract the source memory byte from the destination.
+# @param SRC Immediate byte address or label
+# @param DST Immediate byte address or label
+# @return mem[DST] = (original mem[DST] - original mem[SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[DST]
+# Preserves SP and every unlisted register and memory cell.
+# Equal source and destination addresses produce zero.
+*submem/2
+    ldi r0, $1
+    ld r0, r1
+    ldi r2, $2
+    ld r2, r3
+    sub r1, r3
+    neg r3
+    st r2, r3
+
+# mulmem SRC, DST
+# Multiply two memory bytes.
+# @param SRC Immediate byte address or label
+# @param DST Immediate byte address or label
+# @return mem[DST] = (original mem[DST] * original mem[SRC]) modulo 256
+# @changed r0, r1, r2, r3, PS, mem[DST]
+# Preserves SP and every unlisted register and memory cell.
+# Equal source and destination addresses square the original value. Uses at most 255 additions.
+*mulmem/2
+    ldi r0, $1
+    ld r0, r1
+    ldi r0, $2
+    ld r0, r2
+    clr r3
+    while
+        tst r2
+    stays nz
+        add r1, r3
+        dec r2
+    wend
+    st r0, r3

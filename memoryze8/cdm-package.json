@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "name": "memoryze8",
+  "description": "Byte memory, stack-slot and pointer macros for CdM-8",
+  "publisher": "stalcker2288969",
+  "targets": [
+    "cdm8"
+  ],
+  "files": [
+    "lib.asm",
+    "memory.mlb",
+    "stack.mlb",
+    "pointers.mlb",
+    "README.md"
+  ]
+}

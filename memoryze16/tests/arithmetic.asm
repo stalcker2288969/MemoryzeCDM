@@ -1,0 +1,10 @@
+asect 0
+    dc start, 0
+asect 0x200
+start:
+    summem 0x9000, 0x9002
+    submem 0x9004, 0x9006
+    mulmem 0x9008, 0x900a
+    mulmem 0x900c, 0x900e
+    halt
+end
